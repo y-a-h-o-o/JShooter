@@ -38,17 +38,11 @@ document.addEventListener ('keyup', function(event) {
     }
 });
 
-class JShip {
+class JShip { 
     constructor() {
 
     }
 
-}
-
-class Game {
-    constructor() {
-        
-    }
 }
 
 
