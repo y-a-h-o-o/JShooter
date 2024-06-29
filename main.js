@@ -45,6 +45,13 @@ class JShip {
 
 }
 
+class Game {
+    constructor() {
+        
+    }
+}
+
+
 
 function drawScreen() {
 
