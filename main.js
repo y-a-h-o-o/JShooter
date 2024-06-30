@@ -5,7 +5,11 @@ var keyUp = false;
 var keyDown = false;
 var keyLeft = false;
 var keyRight = false;
-
+var bg = new Image();
+var bgY2 = -480;
+var bgY = 0;
+var bgSpeed = 10;
+bg.src = "Sprites/Background.png"
 
 const keyMap = new Map();
 
@@ -77,15 +81,35 @@ class JShip {
 
 const ship = new JShip(10, 10);
 
+function moveBG() {
+    bgY += bgSpeed; // background scroll speed  
+    bgY2 += bgSpeed; 
+    if(bgY >= 480) {
+        bgY = -480;
+    }  
+    if(bgY2 >= 480) {
+        bgY2 = -480;
+    }
+}
 
+
+function repaint() {
+    canvasContext.drawImage(bg, 160, bgY2);
+    canvasContext.drawImage(bg, 160, bgY);
+    ship.drawShip(canvasContext);
+}
+
+function update() {
+    ship.moveShip();
+    moveBG();
+}
 
 function drawScreen() {
 
     canvasContext.clearRect(0, 0, 640, 480);
-
     canvasContext.save();
-    ship.drawShip(canvasContext);
-    ship.moveShip();
+    repaint();
+    update();
     canvasContext.restore();
     requestAnimationFrame(drawScreen);
 }
