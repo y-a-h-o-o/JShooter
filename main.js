@@ -78,13 +78,13 @@ class Projectile {
     x = 0;
     y = 0;
     img = new Image();
-    boundingBox = new Rectangle()
-    constructor(x, y, xSpeed, ySpeed, imgSrc) {
+    constructor(x, y, xSpeed, ySpeed, imgSrc, boundingBox) {
         this.x = x;
         this.y = y;
         this.xSpeed = xSpeed;
         this.ySpeed = ySpeed;
         this.img.src = imgSrc;
+        this.boundingBox = boundingBox;
     }   
 
     moveProjectile() {
@@ -101,6 +101,7 @@ class Projectile {
 class JShip { 
 
     img = new Image();
+    boundingBox = new Rectangle(0, 0, 32, 32);
     constructor(x, y) {
         this.x = x;
         this.y = y;    
