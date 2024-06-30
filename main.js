@@ -1,53 +1,88 @@
 var canvas = document.getElementById("canvas");
-var canvasContext = canvas.getContext("2d");
-var img = new Image();
-img.src = "Sprites/JShip.png";
-canvasContext.drawImage(img, 10, 10);
-var keyZ = false;
-var keyUp = false;
-var keyDown = false;
-var keyLeft = false;
-var keyRight = false;
+const canvasContext = canvas.getContext("2d");
 
+const keyMap = new Map();
 
-document.addEventListener ('keydown', function(event) {
-    if(event.code == 90) {
-        keyZ = true;
-    } else if (event.code == 38) {
-        keyUp = true;
-    } else if (event.code == 40) {
-        keyDown = true;
-    } else if (event.code == 39) {
-        keyRight = true;
-    } else if (event.code == 37) {
-        keyLeft = true
+addEventListener ('keydown', function(event) {
+    if(event.code == "KeyZ") {
+        keyMap.set("z", true)
+    }  
+    if (event.code == "ArrowUp") {
+        keyMap.set("up", true);
+    }  
+    if (event.code == "ArrowDown") {
+        keyMap.set("down", true);
+    }  
+    if (event.code == "ArrowRight") {
+        keyMap.set("right", true);
+    }  
+    if (event.code == "ArrowLeft") {
+        keyMap.set("left", true);
     }
 });
 
-document.addEventListener ('keyup', function(event) {
-    if(event.code == 90) {
-        keyZ = true;
-    } else if (event.code == 38) {
-        keyUp = true;
-    } else if (event.code == 40) {
-        keyDown = true;
-    } else if (event.code == 39) {
-        keyRight = true;
-    } else if (event.code == 37) {
-        keyLeft = true
+addEventListener ('keyup', function(event) {
+    if(event.code == "KeyZ") {
+        keyMap.set("z", false)
+    }  
+    if (event.code == "ArrowUp") {
+        keyMap.set("up", false);
+    }  
+    if (event.code == "ArrowDown") {
+        keyMap.set("down", false);
+    }  
+    if (event.code == "ArrowRight") {
+        keyMap.set("right", false);
+    }  
+    if (event.code == "ArrowLeft") {
+        keyMap.set("left", false);
     }
 });
 
 class JShip { 
-    constructor() {
 
+    img = new Image();
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;    
+        this.img.src = "Sprites/JShip.png";
+    }
+    
+    moveShip() {
+        if(keyMap.get("right")) {
+            this.x += 10;
+        }  
+        if (keyMap.get("left")) {
+            this.x -= 10;
+        }  
+        if (keyMap.get("down")) {
+            this.y += 10;
+        }  
+        if (keyMap.get("up")) {
+            this.y -= 10;
+        }
+    }
+
+    drawShip (ctx) {
+        ctx.drawImage(this.img, this.x, this.y);
     }
 
 }
+
+const ship = new JShip(10, 10);
 
 
 
 function drawScreen() {
 
-}   
+    canvasContext.clearRect(0, 0, 640, 480);
 
+    canvasContext.save();
+    ship.drawShip(canvasContext);
+    ship.moveShip();
+    canvasContext.restore();
+    requestAnimationFrame(drawScreen);
+}
+
+
+drawScreen();
