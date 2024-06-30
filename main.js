@@ -10,8 +10,7 @@ var bgY2 = -480;
 var bgY = 0;
 var bgSpeed = 10;
 bg.src = "Sprites/Background.png"
-
-const keyMap = new Map();
+const projectileList = [];
 
 addEventListener ('keydown', function(event) {
     if(event.code == "KeyZ") {
@@ -48,6 +47,56 @@ addEventListener ('keyup', function(event) {
         keyLeft = false;
     }
 });
+
+
+class Rectangle {
+    x = 0;
+    y = 0;
+    width = 0;
+    height = 0;
+
+    constructor(x, y, width, height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
+
+    intersects(r2) {
+        var r1 = this;
+        return !(r2.x > r1.x + r1.width ||
+            r2.x + r2.width < r1.x ||
+            r2.y > r1.y + r1.height ||
+            r2.y + r2.height < r1.y);
+    }
+
+}
+
+class Projectile {
+    xSpeed = 0;
+    ySpeed = 0;
+    x = 0;
+    y = 0;
+    img = new Image();
+    boundingBox = new Rectangle()
+    constructor(x, y, xSpeed, ySpeed, imgSrc) {
+        this.x = x;
+        this.y = y;
+        this.xSpeed = xSpeed;
+        this.ySpeed = ySpeed;
+        this.img.src = imgSrc;
+    }   
+
+    moveProjectile() {
+        this.x += this.xSpeed;
+        this.y += this.ySpeed;
+    }
+
+    drawProjectile() {
+        canvasContext.drawImage(this.img, this.x, this.y);
+    }
+}
+
 
 class JShip { 
 
