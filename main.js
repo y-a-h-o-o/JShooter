@@ -1,41 +1,47 @@
 var canvas = document.getElementById("canvas");
 const canvasContext = canvas.getContext("2d");
+var keyZ = false;
+var keyUp = false;
+var keyDown = false;
+var keyLeft = false;
+var keyRight = false;
+
 
 const keyMap = new Map();
 
 addEventListener ('keydown', function(event) {
     if(event.code == "KeyZ") {
-        keyMap.set("z", true)
+        keyZ = true;
     }  
     if (event.code == "ArrowUp") {
-        keyMap.set("up", true);
+        keyUp = true;
     }  
     if (event.code == "ArrowDown") {
-        keyMap.set("down", true);
+        keyDown = true;
     }  
     if (event.code == "ArrowRight") {
-        keyMap.set("right", true);
+        keyRight = true;          
     }  
     if (event.code == "ArrowLeft") {
-        keyMap.set("left", true);
+        keyLeft = true;
     }
 });
 
 addEventListener ('keyup', function(event) {
     if(event.code == "KeyZ") {
-        keyMap.set("z", false)
-    }  
+        keyZ = false;
+    } 
     if (event.code == "ArrowUp") {
-        keyMap.set("up", false);
-    }  
+        keyUp = false;
+    } 
     if (event.code == "ArrowDown") {
-        keyMap.set("down", false);
-    }  
+        keyDown = false;
+    } 
     if (event.code == "ArrowRight") {
-        keyMap.set("right", false);
-    }  
+        keyRight = false;          
+    } 
     if (event.code == "ArrowLeft") {
-        keyMap.set("left", false);
+        keyLeft = false;
     }
 });
 
@@ -49,17 +55,17 @@ class JShip {
     }
     
     moveShip() {
-        if(keyMap.get("right")) {
-            this.x += 10;
+        if(keyRight) {
+            this.x += 5;
         }  
-        if (keyMap.get("left")) {
-            this.x -= 10;
+        if (keyLeft) {
+            this.x -= 5;
         }  
-        if (keyMap.get("down")) {
-            this.y += 10;
+        if (keyDown) {
+            this.y += 5;
         }  
-        if (keyMap.get("up")) {
-            this.y -= 10;
+        if (keyUp) {
+            this.y -= 5;
         }
     }
 
