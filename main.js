@@ -11,7 +11,6 @@ var bgY = 0;
 var bgSpeed = 10;
 bg.src = "Sprites/Background.png"
 const projectileList = [];
-
 addEventListener ('keydown', function(event) {
     if(event.code == "KeyZ") {
         keyZ = true;
@@ -107,9 +106,11 @@ function drawProjectiles() {
 
 
 class JShip { 
-
+    x = 0;
+    y = 0;
     img = new Image();
     boundingBox = new Rectangle(0, 0, 32, 32);
+    interval;
     constructor(x, y) {
         this.x = x;
         this.y = y;    
@@ -132,10 +133,10 @@ class JShip {
     }
 
     shoot() {
-        if(keyZ) {
-            var p = new Projectile(this.x, this.y - 32, 0, -8, "Sprites/laser.png", new Rectangle(0, 0, 0, 0)); 
-            projectileList.push(p);
-        }
+        var p1 = new Projectile(this.x - 16, this.y - 32, 0, -8, "Sprites/laser.png", new Rectangle(0, 0, 0, 0)); 
+        var p2 = new Projectile(this.x + 16, this.y - 32, 0, -8, "Sprites/laser.png", new Rectangle(0, 0, 0, 0)); 
+        projectileList.push(p1);
+        projectileList.push(p2);
     }
 
     drawShip (ctx) {
@@ -145,6 +146,22 @@ class JShip {
 }
 
 const ship = new JShip(10, 10);
+
+function shipShoot() {
+    ship.shoot();
+}
+
+function shootDelay() {
+    if(keyZ) {
+        if(!ship.interval) {
+            ship.interval = setInterval(shipShoot, 100);
+        }
+    } else {
+        clearInterval(ship.interval);
+        ship.interval = null;
+    }
+}
+
 
 function moveBG() {
     bgY += bgSpeed; // background scroll speed  
@@ -158,6 +175,7 @@ function moveBG() {
 }
 
 
+
 function repaint() {
     canvasContext.drawImage(bg, 160, bgY2);
     canvasContext.drawImage(bg, 160, bgY);
@@ -168,7 +186,7 @@ function repaint() {
 function update() {
     moveProjectiles();
     ship.moveShip();
-    ship.shoot();
+    shootDelay();
     moveBG();
 }
 
