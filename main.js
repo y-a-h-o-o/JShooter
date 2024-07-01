@@ -97,6 +97,14 @@ class Projectile {
     }
 }
 
+function moveProjectiles() {
+    projectileList.forEach((element) => element.moveProjectile());
+}
+
+function drawProjectiles() {
+    projectileList.forEach((element) => element.drawProjectile());
+}
+
 
 class JShip { 
 
@@ -120,6 +128,13 @@ class JShip {
         }  
         if (keyUp) {
             this.y -= 5;
+        }
+    }
+
+    shoot() {
+        if(keyZ) {
+            var p = new Projectile(this.x, this.y - 32, 0, -8, "Sprites/laser.png", new Rectangle(0, 0, 0, 0)); 
+            projectileList.push(p);
         }
     }
 
@@ -147,10 +162,13 @@ function repaint() {
     canvasContext.drawImage(bg, 160, bgY2);
     canvasContext.drawImage(bg, 160, bgY);
     ship.drawShip(canvasContext);
-}
+    drawProjectiles();
+}   
 
 function update() {
+    moveProjectiles();
     ship.moveShip();
+    ship.shoot();
     moveBG();
 }
 
