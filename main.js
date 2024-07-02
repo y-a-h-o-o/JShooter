@@ -11,7 +11,9 @@ var bgY = 0;
 var bgSpeed = 10;
 bg.src = "Sprites/Background.png"
 const projectileList = [];
+var enemyWaveInterval;
 const enemyList = [];
+var game = true;
 
 addEventListener ('keydown', function(event) {
     if(event.code == "KeyZ") {
@@ -119,6 +121,10 @@ class Enemy {
         this.y += 5;
         this.boundingBox.y += 5;
     }
+
+    drawShip(ctx) {
+        ctx.drawImage(this.img, this.x, this.y);
+    }
 }
 
 class JShip {
@@ -163,6 +169,12 @@ class JShip {
 
 }
 
+function spawnEnemy() {
+    // width of background is 320
+    var enemyXPos = 160 + ((Math.floor(Math.random() * 18) + 1) * 16);
+    enemyList.push(new Enemy(enemyXPos, 0)); 
+}
+
 const ship = new JShip(304, 320);
 
 function shipShoot() {
@@ -177,6 +189,33 @@ function shootDelay() {
     } else {
         clearInterval(ship.interval);
         ship.interval = null;
+    }
+}
+
+
+function spawnEnemies() {
+    if(game) {
+        if(!enemyWaveInterval) {
+            enemyWaveInterval = setInterval(spawnEnemy, 1000);
+        }
+    }
+}
+
+function moveEnemies() {
+    enemyList.forEach((element) => element.moveShip());
+}
+
+function drawEnemies() {
+    enemyList.forEach((element) => element.drawShip(canvasContext));
+}
+
+function killEnemies() {
+    for(let i = 0; i < enemyList.length; i++) {
+        for(let j = 0; j < projectileList.length; j++) {
+            if(enemyList[i].boundingBox.intersects(projectileList[j].boundingBox)) {
+                enemyList.splice(i, 1);
+            }
+        }
     }
 }
 
@@ -195,13 +234,17 @@ function repaint() {
     canvasContext.drawImage(bg, 160, bgY2);
     canvasContext.drawImage(bg, 160, bgY);
     ship.drawShip(canvasContext);
+    drawEnemies();
     drawProjectiles();
 }   
 
 function update() {
     moveProjectiles();
+    spawnEnemies();
     ship.moveShip();
+    moveEnemies();
     shootDelay();
+    killEnemies();
     moveBG();
 }
 
