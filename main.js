@@ -134,7 +134,7 @@ class Enemy {
     }
 
     shoot() {
-        if(true) {
+        if((Math.floor(Math.random()*3)) == 1) {
             var p1 = new Projectile(this.x - 16, this.y + 32, 0, 10, "Sprites/laser.png", new Rectangle(this.x - 3, this.y + 32, 6, 32), this); 
             var p2 = new Projectile(this.x + 16, this.y + 32, 0, 10, "Sprites/laser.png", new Rectangle(this.x + 29, this.y + 32, 6, 32), this); 
             projectileList.push(p1);
@@ -216,15 +216,13 @@ function shootDelay() {
 function enemyShootDelay(eShip) {
     if(eShip.alive) {
         if(!eShip.interval) {
-            eShip.interval = setInterval(eShipShoot(eShip), 200);
+            eShip.interval = setInterval(eShipShoot, 200, eShip);
         }      
     } else {
         clearInterval(eShip.interval);
         eShip.interval = null;
     }
 }
-
-
 
 function spawnEnemies() {
     if(game) {
@@ -251,6 +249,8 @@ function killEnemies() {
         for(let j = 0; j < projectileList.length; j++) {
             if(enemyList[i].boundingBox.intersects(projectileList[j].boundingBox) && enemyList[i].alive && enemyList[i] != projectileList[j].owner) {
                 enemyList[i].alive = false;
+                clearInterval(enemyList[i].interval);
+                enemyList[i].interval = null;
                 enemyList.splice(i, 1);
                 break;
             }
@@ -297,6 +297,5 @@ function drawScreen() {
     canvasContext.restore();
     requestAnimationFrame(drawScreen);
 }
-
 
 drawScreen();
