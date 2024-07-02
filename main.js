@@ -116,6 +116,7 @@ class Enemy {
         this.y = y;
         this.img.src = "Sprites/Enemy.png";
         this.boundingBox = new Rectangle(this.x, this.y, 32, 32);
+        this.alive = true;
     }
     moveShip() {
         this.y += 5;
@@ -157,8 +158,8 @@ class JShip {
     }
 
     shoot() {
-        var p1 = new Projectile(this.x - 16, this.y - 32, 0, -8, "Sprites/laser.png", new Rectangle(this.x + 13, 0, 6, 32)); 
-        var p2 = new Projectile(this.x + 16, this.y - 32, 0, -8, "Sprites/laser.png", new Rectangle(this.x + 13, 0, 6, 32)); 
+        var p1 = new Projectile(this.x - 16, this.y - 32, 0, -8, "Sprites/laser.png", new Rectangle(this.x - 3, this.y - 32, 6, 32)); 
+        var p2 = new Projectile(this.x + 16, this.y - 32, 0, -8, "Sprites/laser.png", new Rectangle(this.x + 29, this.y - 32, 6, 32)); 
         projectileList.push(p1);
         projectileList.push(p2);
     }
@@ -172,7 +173,8 @@ class JShip {
 function spawnEnemy() {
     // width of background is 320
     var enemyXPos = 160 + ((Math.floor(Math.random() * 18) + 1) * 16);
-    enemyList.push(new Enemy(enemyXPos, 0)); 
+    var enemy = new Enemy(enemyXPos, 0);
+    enemyList.push(enemy); 
 }
 
 const ship = new JShip(304, 320);
@@ -212,8 +214,10 @@ function drawEnemies() {
 function killEnemies() {
     for(let i = 0; i < enemyList.length; i++) {
         for(let j = 0; j < projectileList.length; j++) {
-            if(enemyList[i].boundingBox.intersects(projectileList[j].boundingBox)) {
+            if(enemyList[i].boundingBox.intersects(projectileList[j].boundingBox) && enemyList[i].alive) {
+                enemyList[i].alive = false;
                 enemyList.splice(i, 1);
+                break;
             }
         }
     }
