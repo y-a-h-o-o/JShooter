@@ -11,6 +11,8 @@ var bgY = 0;
 var bgSpeed = 10;
 bg.src = "Sprites/Background.png"
 const projectileList = [];
+const enemyList = [];
+
 addEventListener ('keydown', function(event) {
     if(event.code == "KeyZ") {
         keyZ = true;
@@ -46,7 +48,6 @@ addEventListener ('keyup', function(event) {
         keyLeft = false;
     }
 });
-
 
 class Rectangle {
     x = 0;
@@ -89,6 +90,8 @@ class Projectile {
     moveProjectile() {
         this.x += this.xSpeed;
         this.y += this.ySpeed;
+        this.boundingBox.x += this.xSpeed;
+        this.boundingBox.y += this.ySpeed;
     }
 
     drawProjectile() {
@@ -104,37 +107,52 @@ function drawProjectiles() {
     projectileList.forEach((element) => element.drawProjectile());
 }
 
-
-class JShip { 
-    x = 0;
-    y = 0;
+class Enemy {
     img = new Image();
-    boundingBox = new Rectangle(0, 0, 32, 32);
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.img.src = "Sprites/Enemy.png";
+        this.boundingBox = new Rectangle(this.x, this.y, 32, 32);
+    }
+    moveShip() {
+        this.y += 5;
+        this.boundingBox.y += 5;
+    }
+}
+
+class JShip {
+    img = new Image();
     interval;
     constructor(x, y) {
         this.x = x;
         this.y = y;    
         this.img.src = "Sprites/JShip.png";
+        this.boundingBox = new Rectangle(this.x, this.y, 32, 32);
     }
     
     moveShip() {
-        if(keyRight) {
+        if(keyRight && this.x  + 32 <= 480) {
             this.x += 5;
+            this.boundingBox.x += 5;
         }  
-        if (keyLeft) {
+        if (keyLeft && this.x >= 160) {
             this.x -= 5;
+            this.boundingBox.x -= 5;
         }  
-        if (keyDown) {
+        if (keyDown && this.y + 32 <= 480) {
             this.y += 5;
+            this.boundingBox.y += 5;
         }  
-        if (keyUp) {
+        if (keyUp && this.y >= 0) {
             this.y -= 5;
+            this.boundingBox.y -= 5;
         }
     }
 
     shoot() {
-        var p1 = new Projectile(this.x - 16, this.y - 32, 0, -8, "Sprites/laser.png", new Rectangle(0, 0, 0, 0)); 
-        var p2 = new Projectile(this.x + 16, this.y - 32, 0, -8, "Sprites/laser.png", new Rectangle(0, 0, 0, 0)); 
+        var p1 = new Projectile(this.x - 16, this.y - 32, 0, -8, "Sprites/laser.png", new Rectangle(this.x + 13, 0, 6, 32)); 
+        var p2 = new Projectile(this.x + 16, this.y - 32, 0, -8, "Sprites/laser.png", new Rectangle(this.x + 13, 0, 6, 32)); 
         projectileList.push(p1);
         projectileList.push(p2);
     }
@@ -145,7 +163,7 @@ class JShip {
 
 }
 
-const ship = new JShip(10, 10);
+const ship = new JShip(304, 320);
 
 function shipShoot() {
     ship.shoot();
@@ -154,14 +172,13 @@ function shipShoot() {
 function shootDelay() {
     if(keyZ) {
         if(!ship.interval) {
-            ship.interval = setInterval(shipShoot, 100);
+            ship.interval = setInterval(shipShoot, 200);
         }
     } else {
         clearInterval(ship.interval);
         ship.interval = null;
     }
 }
-
 
 function moveBG() {
     bgY += bgSpeed; // background scroll speed  
@@ -173,8 +190,6 @@ function moveBG() {
         bgY2 = -480;
     }
 }
-
-
 
 function repaint() {
     canvasContext.drawImage(bg, 160, bgY2);
