@@ -80,13 +80,14 @@ class Projectile {
     x = 0;
     y = 0;
     img = new Image();
-    constructor(x, y, xSpeed, ySpeed, imgSrc, boundingBox) {
+    constructor(x, y, xSpeed, ySpeed, imgSrc, boundingBox, owner) {
         this.x = x;
         this.y = y;
         this.xSpeed = xSpeed;
         this.ySpeed = ySpeed;
         this.img.src = imgSrc;
         this.boundingBox = boundingBox;
+        this.owner = owner;
     }   
 
     moveProjectile() {
@@ -97,7 +98,9 @@ class Projectile {
     }
 
     drawProjectile() {
-        canvasContext.drawImage(this.img, this.x, this.y);
+        if(this.y >= 0 || this.y <= 480) {
+            canvasContext.drawImage(this.img, this.x, this.y);
+        }
     }
 }
 
@@ -111,6 +114,7 @@ function drawProjectiles() {
 
 class Enemy {
     img = new Image();
+    interval;
     constructor(x, y) {
         this.x = x;
         this.y = y;
@@ -124,7 +128,18 @@ class Enemy {
     }
 
     drawShip(ctx) {
-        ctx.drawImage(this.img, this.x, this.y);
+        if(this.y <= 480) {
+            ctx.drawImage(this.img, this.x, this.y);
+        }
+    }
+
+    shoot() {
+        if(true) {
+            var p1 = new Projectile(this.x - 16, this.y + 32, 0, 10, "Sprites/laser.png", new Rectangle(this.x - 3, this.y + 32, 6, 32), this); 
+            var p2 = new Projectile(this.x + 16, this.y + 32, 0, 10, "Sprites/laser.png", new Rectangle(this.x + 29, this.y + 32, 6, 32), this); 
+            projectileList.push(p1);
+            projectileList.push(p2);
+        }
     }
 }
 
@@ -158,8 +173,8 @@ class JShip {
     }
 
     shoot() {
-        var p1 = new Projectile(this.x - 16, this.y - 32, 0, -8, "Sprites/laser.png", new Rectangle(this.x - 3, this.y - 32, 6, 32)); 
-        var p2 = new Projectile(this.x + 16, this.y - 32, 0, -8, "Sprites/laser.png", new Rectangle(this.x + 29, this.y - 32, 6, 32)); 
+        var p1 = new Projectile(this.x - 16, this.y - 32, 0, -8, "Sprites/laser.png", new Rectangle(this.x - 3, this.y - 32, 6, 32), this); 
+        var p2 = new Projectile(this.x + 16, this.y - 32, 0, -8, "Sprites/laser.png", new Rectangle(this.x + 29, this.y - 32, 6, 32), this); 
         projectileList.push(p1);
         projectileList.push(p2);
     }
@@ -183,6 +198,10 @@ function shipShoot() {
     ship.shoot();
 }
 
+function eShipShoot(eShip) {
+    eShip.shoot();
+}
+
 function shootDelay() {
     if(keyZ) {
         if(!ship.interval) {
@@ -193,6 +212,18 @@ function shootDelay() {
         ship.interval = null;
     }
 }
+
+function enemyShootDelay(eShip) {
+    if(eShip.alive) {
+        if(!eShip.interval) {
+            eShip.interval = setInterval(eShipShoot(eShip), 200);
+        }      
+    } else {
+        clearInterval(eShip.interval);
+        eShip.interval = null;
+    }
+}
+
 
 
 function spawnEnemies() {
@@ -211,10 +242,14 @@ function drawEnemies() {
     enemyList.forEach((element) => element.drawShip(canvasContext));
 }
 
+function shootEnemies() {
+    enemyList.forEach((element) => enemyShootDelay(element));
+}
+
 function killEnemies() {
     for(let i = 0; i < enemyList.length; i++) {
         for(let j = 0; j < projectileList.length; j++) {
-            if(enemyList[i].boundingBox.intersects(projectileList[j].boundingBox) && enemyList[i].alive) {
+            if(enemyList[i].boundingBox.intersects(projectileList[j].boundingBox) && enemyList[i].alive && enemyList[i] != projectileList[j].owner) {
                 enemyList[i].alive = false;
                 enemyList.splice(i, 1);
                 break;
@@ -248,6 +283,7 @@ function update() {
     ship.moveShip();
     moveEnemies();
     shootDelay();
+    shootEnemies();
     killEnemies();
     moveBG();
 }
